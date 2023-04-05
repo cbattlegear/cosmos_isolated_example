@@ -22,7 +22,11 @@ namespace cosmos_isolated_example
 
             //Read request body
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            var part = JsonConvert.DeserializeObject<Part>(requestBody);
+            Part part = JsonConvert.DeserializeObject<Part>(requestBody);
+
+            part.id = Guid.NewGuid();
+
+            IReadOnlyList<Part> readonlyparts = new List<Part>() { part };
 
             var response = req.CreateResponse(HttpStatusCode.OK);
 
@@ -30,7 +34,7 @@ namespace cosmos_isolated_example
 
             return new CreatePartOutput() 
             { 
-                CosmosOut = part,
+                CosmosOut = readonlyparts,
                 HttpResponse = response
             };
         }
@@ -40,7 +44,7 @@ namespace cosmos_isolated_example
         public class CreatePartOutput 
         {
             [CosmosDBOutput("demo", "test", Connection = "CosmosConnection")]
-            public Part CosmosOut { get; set; }
+            public IReadOnlyList<Part> CosmosOut { get; set; }
             public HttpResponseData HttpResponse { get; set; }
         }
     }
