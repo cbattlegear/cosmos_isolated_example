@@ -16,7 +16,7 @@ namespace cosmos_isolated_example
         }
 
         [Function("CreatePart")]
-        public async Task<CreatePartOutput> Run([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequestData req)
+        public async Task<CreatePartOutput> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = "part")] HttpRequestData req)
         {
             _logger.LogInformation("C# HTTP trigger function processed a request.");
 
@@ -25,6 +25,7 @@ namespace cosmos_isolated_example
             Part part = JsonConvert.DeserializeObject<Part>(requestBody);
 
             part.id = Guid.NewGuid();
+            _logger.LogInformation("Generated Part ID: " + part.id.ToString());
 
             IReadOnlyList<Part> readonlyparts = new List<Part>() { part };
 
